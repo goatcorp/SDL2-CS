@@ -3,26 +3,13 @@ stages:
   - package
   - deploy
 
-build_net461:
-  image: mono
-  stage: build
-  only:
-    - schedules
-  script:
-    - ./gitlab-ci/build-net461.sh
-  artifacts:
-    paths:
-      - bin/
-  tags:
-    - docker
-
 build_netcore:
   image: microsoft/dotnet:2.1-sdk
   stage: build
   only:
     - schedules
   script:
-    - ./gitlab-ci/build-netcore.sh
+    - ./gitlab-ci/build.sh
   artifacts:
     paths:
       - bin/
@@ -37,8 +24,7 @@ package_nuget:
   script:
     - ./gitlab-ci/package.sh
   dependencies:
-    - build_net461
-    - build_netcore
+    - build
   artifacts:
     paths:
       - '*.nupkg'
@@ -55,4 +41,3 @@ deploy_nuget:
   environment:
     name: nuget
     url: http://nuget.org/
-
